@@ -36,18 +36,25 @@ npm install
 
 </details>
 
-### 2. Create and seed the database
+### 2. Run the docker compose with the following command:
 
-Run the following command to create your SQLite database file. This also creates the `User` and `Post` tables that are defined in [`prisma/schema.prisma`](./prisma/schema.prisma):
+```bash
+docker compose up -d
+```
+
+This will stand up a docker environment on your local machine with all the required infrastructure pieces for running locally.
+
+### 3. Create and seed the database
+
+Run the following command to create your SQLite database file. This also creates the tables that are defined in [`prisma/schema.prisma`](./prisma/schema.prisma):
 
 ```
-npx prisma migrate dev --name init
+pnpm migrate:dev --name init
 ```
 
 When `npx prisma migrate dev` is executed against a newly created database, seeding is also triggered. The seed file in [`prisma/seed.ts`](./prisma/seed.ts) will be executed and your database will be populated with the sample data.
 
-
-### 3. Start the REST API server
+### 4. Start the REST API server
 
 ```
 npm run dev
@@ -70,6 +77,7 @@ You can access the REST API of the server using the following endpoints:
     - `orderBy` (optional): The sort order for posts in either ascending or descending order. The value can either `asc` or `desc`
 - `/user/:id/drafts`: Fetch user's drafts by their `id`
 - `/users`: Fetch all users
+
 ### `POST`
 
 - `/post`: Create a new post
@@ -91,7 +99,6 @@ You can access the REST API of the server using the following endpoints:
 ### `DELETE`
 
 - `/post/:id`: Delete a post by its `id`
-
 
 ## Evolving the app
 
@@ -175,7 +182,12 @@ async createUserProfile(
 At the top of `app.controller.ts`, update your imports to include `Profile` from `@prisma/client` as follows:
 
 ```ts
-import { User as UserModel, Post as PostModel, Prisma, Profile } from '@prisma/client'
+import {
+  User as UserModel,
+  Post as PostModel,
+  Prisma,
+  Profile,
+} from '@prisma/client';
 ```
 
 #### 2.2 Testing out your new endpoint
@@ -187,7 +199,6 @@ Restart your application server and test out your new endpoint.
 - `/user/:id/profile`: Create a new profile based on the user id
   - Body:
     - `bio: String` : The bio of the user
-
 
 <details><summary>Expand to view more sample Prisma Client queries on <code>Profile</code></summary>
 
@@ -203,7 +214,7 @@ const profile = await prisma.profile.create({
       connect: { email: 'alice@prisma.io' },
     },
   },
-})
+});
 ```
 
 ##### Create a new user with a new profile
@@ -219,7 +230,7 @@ const user = await prisma.user.create({
       },
     },
   },
-})
+});
 ```
 
 ##### Update the profile of an existing user
@@ -234,7 +245,7 @@ const userWithUpdatedProfile = await prisma.user.update({
       },
     },
   },
-})
+});
 ```
 
 </details>
@@ -316,4 +327,3 @@ datasource db {
 - Check out the [Prisma docs](https://www.prisma.io/docs)
 - Share your feedback on the [Prisma Discord](https://pris.ly/discord/)
 - Create issues and ask questions on [GitHub](https://github.com/prisma/prisma/)
-
